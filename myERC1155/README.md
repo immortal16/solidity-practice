@@ -1,0 +1,3 @@
+# My ERC1155
+
+Contract deployed to: 0x49b80DF2De6D643b35910828499e20141e917a30
