@@ -1,6 +1,6 @@
 # solidity-practice
 
-### task 1
+### Task 1
 
 - Truffle / Hardhat - find out how to create project structure, compile simple contracts, deploy them to the testnet. Hardhat is preferred. 
 - Open zeppelin - a good library with smart contracts. Review example of token contracts, documentation and howtos. 
@@ -10,7 +10,7 @@
 - Implement migration script and deploy both tokens to Goerli testnet.
 - Write tests for all contracts.
 
-### task 2
+### Task 2
 
 - ERC20 Upgradeable (simple token).
 - Deploy this token into testnet (Goerli).
@@ -21,3 +21,7 @@
 - Add Pausability feature into ERC20 contract (see OZ).
 - Upgrade existing token contract with new one with pausability feature.
 - Make sure upgrade is done correctly.
+
+### Task 2*
+
+#### Same as Task 2 but without using hardhat-upgrades plugin.
