@@ -81,7 +81,7 @@ describe('myTokenUpgradeable Transparent Contract', () => {
         const implv1 = await implContract.deployed();
 
         const Proxy = await ethers.getContractFactory('TransparentProxy');
-        // .\artifacts\contracts\ERC20UTransparent.sol\MyTokenUV2T.json -> https://abi.hashex.org/ -> initializeV1() -> 0x8129fc1c
+        // .\artifacts\contracts\ERC20UTransparent.sol\MyTokenUV1T.json -> https://abi.hashex.org/ -> initializeV1() -> 0x8129fc1c
         const proxyContract = await Proxy.deploy(implv1.address, proxyAdmin.address, "0x8129fc1c");
         proxy = await proxyContract.deployed();
 
