@@ -4,7 +4,7 @@ const UNISWAP = require('@uniswap/sdk');
 
 require('dotenv').config();
 
-const receiver = '0x06A759d79246e76F6C6E770E9A28c342ffDF7A84';
+const receiver = 'PASTE_ADDRESS_HERE';
 
 async function main() {
     const chainId = UNISWAP.ChainId.GÖRLI;
