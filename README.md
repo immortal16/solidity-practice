@@ -27,3 +27,7 @@
 #### Same as Task 2 but without using hardhat-upgrades plugin.
 - UUPS Proxy
 - Transparent Proxy
+
+### Task 3
+
+- Swap ETH for DAI with UniswapV2.
