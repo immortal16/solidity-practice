@@ -25,9 +25,13 @@
 ### Task 2*
 
 #### Same as Task 2 but without using hardhat-upgrades plugin.
-- UUPS Proxy
-- Transparent Proxy
+- UUPS Proxy.
+- Transparent Proxy.
 
 ### Task 3
 
 - Swap ETH for DAI with UniswapV2.
+
+### Task 4
+
+- Protocol for receive NFT through a shared secret.
