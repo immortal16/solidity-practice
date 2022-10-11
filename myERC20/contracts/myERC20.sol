@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyERC20 is ERC20, Ownable {
 
-    event tokensMinted(address indexed owner, uint24 amount, string comment);
-    event tokensBurned(address indexed from, uint24 amount, string comment);
+    event Mint(address indexed owner, uint24 amount, string comment);
+    event Burn(address indexed from, uint24 amount, string comment);
 
     uint32 public constant maxSupply = 100000 * 10 ** 3;
 
@@ -18,7 +18,7 @@ contract MyERC20 is ERC20, Ownable {
             "Impossible, excessing maximum supply."
         );
         _mint(msg.sender, initialSupply * 10 ** decimals());
-        emit tokensMinted(msg.sender, initialSupply, "Initial supply minted.");
+        emit Mint(msg.sender, initialSupply, "Initial supply minted.");
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -31,12 +31,12 @@ contract MyERC20 is ERC20, Ownable {
             "Impossible, excessing maximum supply."
         );
         _mint(to, amount * 10 ** decimals());
-        emit tokensMinted(owner(), amount, "Additional supply minted.");
+        emit Mint(owner(), amount, "Additional supply minted.");
     }
 
     function burn(uint24 amount) public {
         _burn(msg.sender, amount * 10 ** decimals());
-        emit tokensBurned(msg.sender, amount, "Tokens burned.");
+        emit Burn(msg.sender, amount, "Tokens burned.");
     }
 }
 

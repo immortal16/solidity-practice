@@ -63,9 +63,9 @@ contract MyTokenUV2 is
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BKLIST_ROLE = keccak256("BKLIST_ROLE");
 
-    event tokensMinted(address indexed minter, uint24 amount, string comment);
-    event tokensBurned(address indexed from, uint24 amount, string comment);
-    event blackListIneraction(address indexed admin, address blacklisted, string comment);
+    event Mint(address indexed minter, uint24 amount, string comment);
+    event Burn(address indexed from, uint24 amount, string comment);
+    event Blacklist(address indexed admin, address blacklisted, string comment);
 
     mapping (address => bool) blackList;
 
@@ -88,14 +88,14 @@ contract MyTokenUV2 is
             "Impossible, excessing maximum supply."
         );
         _mint(to, amount * 10 ** decimals());
-        emit tokensMinted(msg.sender, amount, "Additional supply minted.");
+        emit Mint(msg.sender, amount, "Additional supply minted.");
     }
 
     function burn(uint24 amount)
         external 
     {
         _burn(msg.sender, amount * 10 ** decimals());
-        emit tokensBurned(msg.sender, amount, "Tokens burned.");
+        emit Burn(msg.sender, amount, "Tokens burned.");
     }
 
     function toBlackList(address candidate, bool state)
@@ -104,9 +104,9 @@ contract MyTokenUV2 is
     {
         blackList[candidate] = state;
         if (state) {
-            emit blackListIneraction(msg.sender, candidate, "Added to blacklist.");
+            emit Blacklist(msg.sender, candidate, "Added to blacklist.");
         } else {
-            emit blackListIneraction(msg.sender, candidate, "Removed from blackist.");
+            emit Blacklist(msg.sender, candidate, "Removed from blackist.");
         }
     }
 
@@ -136,7 +136,7 @@ contract MyTokenUV3 is
 
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    event pauseInteraction(address indexed pauser, string comment);
+    event Pause(address indexed pauser, string comment);
 
     function initializeV3()
         reinitializer(3)
@@ -151,7 +151,7 @@ contract MyTokenUV3 is
         onlyRole(PAUSER_ROLE)
     {
         _pause();
-        emit pauseInteraction(msg.sender, "Paused.");
+        emit Pause(msg.sender, "Paused.");
     }
 
     function unpause()
@@ -159,7 +159,7 @@ contract MyTokenUV3 is
         onlyRole(PAUSER_ROLE)
     {
         _unpause();
-        emit pauseInteraction(msg.sender, "Unpaused.");
+        emit Pause(msg.sender, "Unpaused.");
     }
 
     function pausedStr()
