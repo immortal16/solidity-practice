@@ -35,3 +35,11 @@
 ### Task 4
 
 - Protocol for receive NFT through a shared secret.
+
+### Task 5
+
+- Migrate project from hardhat to brownie (only deploy scripts)
+
+### Task 6
+
+- Swap ETH for DAI with UniswapV3.

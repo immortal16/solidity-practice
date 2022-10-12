@@ -1,4 +1,4 @@
-# Swap ETH for DAI using Uniswap
+# Swap ETH for DAI using UniswapV2
 
 #### Runup
 
