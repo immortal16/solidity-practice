@@ -43,3 +43,7 @@
 ### Task 6
 
 - Swap ETH for DAI with UniswapV3.
+
+### Task 7
+
+- Supply / Redeem with Compound Finance Protocol.
