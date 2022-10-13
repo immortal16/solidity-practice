@@ -47,5 +47,7 @@
 
 ### Task 7
 
-- Supply / Redeem with Compound Finance Protocol.
+Compound Finance Protocol
+
+- Supply / Redeem
 - Borrow / Repay

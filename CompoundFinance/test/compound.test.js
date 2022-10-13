@@ -126,6 +126,8 @@ describe("Compound Protocol", () => {
 
     await USDCcontract.approve(cUSDCcontract.address, borrowAmount);
     await cUSDCcontract.repayBorrow(borrowAmount);
+
+    await compContract.exitMarket(cUSDCaddress);
     
     let balanceAfterUSDC = await USDCcontract.balanceOf(userAddress);
     balanceAfterUSDC = ethers.utils.formatUnits(balanceAfterUSDC, 6);
