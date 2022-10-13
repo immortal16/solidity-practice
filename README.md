@@ -25,6 +25,7 @@
 ### Task 2*
 
 #### Same as Task 2 but without using hardhat-upgrades plugin.
+
 - UUPS Proxy.
 - Transparent Proxy.
 
@@ -47,3 +48,4 @@
 ### Task 7
 
 - Supply / Redeem with Compound Finance Protocol.
+- Borrow / Repay

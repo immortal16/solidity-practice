@@ -4,11 +4,16 @@ const { ethers } = require("hardhat")
 const USDCaddress = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 const USDCwhaleAddress = '0x7713974908be4bed47172370115e8b1219f4a5f0';
 const cUSDCaddress = '0x39AA39c021dfbaE8faC545936693aC917d5E7563';
+const comptrollerAddress = '0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b';
 
 let USDCcontract;
 let cUSDCcontract;
+let compContract;
 let user;
 let userAddress;
+
+const amount = ethers.utils.parseUnits('10000000', 6);
+const borrowAmount = ethers.utils.parseUnits('10000', 6);
 
 describe("Compound Protocol", () => {
   before(async () => {
@@ -20,6 +25,9 @@ describe("Compound Protocol", () => {
 
     const cUSDCabi = require('./cERC20.abi.json');
     cUSDCcontract = await ethers.getContractAt(cUSDCabi, cUSDCaddress, user);
+
+    const compAbi = require('../artifacts/contracts/ComptrollerInterface.sol/Comptroller.json').abi;
+    compContract = await ethers.getContractAt(compAbi, comptrollerAddress, user);
   })
 
   it("account impersonated & contracts attached", async () => {
@@ -37,9 +45,7 @@ describe("Compound Protocol", () => {
     balanceBeforecUSDC = ethers.utils.formatUnits(balanceBeforecUSDC, 8);
     console.log(`cUSDC balance before supply : ${balanceBeforecUSDC} cUSDC`);
 
-    const amount = ethers.utils.parseUnits('10000000', 6);
     await USDCcontract.approve(cUSDCcontract.address, amount);
-
     await cUSDCcontract.mint(amount);
 
     let balanceAfterUSDC = await USDCcontract.balanceOf(userAddress);
@@ -82,8 +88,6 @@ describe("Compound Protocol", () => {
     let balanceBeforeUSDC = await USDCcontract.balanceOf(userAddress);
     balanceBeforeUSDC = ethers.utils.formatUnits(balanceBeforeUSDC, 6);
 
-    const amount = ethers.utils.parseUnits('10000000', 6);
-
     await USDCcontract.approve(cUSDCcontract.address, amount);
     await cUSDCcontract.mint(amount);
 
@@ -94,5 +98,39 @@ describe("Compound Protocol", () => {
     balanceAfterUSDC = ethers.utils.formatUnits(balanceAfterUSDC, 6);
 
     expect(parseFloat(balanceBeforeUSDC) < parseFloat(balanceAfterUSDC)).to.be.true;
-  }) 
+  })
+
+  it("enter market and borrow", async () => {
+    await USDCcontract.approve(cUSDCcontract.address, amount);
+    await cUSDCcontract.mint(amount);
+
+    await compContract.enterMarkets([cUSDCaddress]);
+
+    let balanceBeforeUSDC = await USDCcontract.balanceOf(userAddress);
+    balanceBeforeUSDC = ethers.utils.formatUnits(balanceBeforeUSDC, 6);
+    console.log(`USDC balance before borrow : ${balanceBeforeUSDC} USDC`);
+
+    await cUSDCcontract.borrow(borrowAmount);
+
+    let balanceAfterUSDC = await USDCcontract.balanceOf(userAddress);
+    balanceAfterUSDC = ethers.utils.formatUnits(balanceAfterUSDC, 6);
+    console.log(`USDC balance after borrow : ${balanceAfterUSDC} USDC`);
+    
+    expect(parseFloat(balanceBeforeUSDC) + parseFloat(borrowAmount) >= parseFloat(balanceAfterUSDC)).to.be.true;
+  })
+
+  it("repay borrow", async () => {
+    let balanceBeforeUSDC = await USDCcontract.balanceOf(userAddress);
+    balanceBeforeUSDC = ethers.utils.formatUnits(balanceBeforeUSDC, 6);
+    console.log(`USDC balance before repay : ${balanceBeforeUSDC} USDC`);
+
+    await USDCcontract.approve(cUSDCcontract.address, borrowAmount);
+    await cUSDCcontract.repayBorrow(borrowAmount);
+    
+    let balanceAfterUSDC = await USDCcontract.balanceOf(userAddress);
+    balanceAfterUSDC = ethers.utils.formatUnits(balanceAfterUSDC, 6);
+    console.log(`USDC balance after repay : ${balanceAfterUSDC} USDC`);
+    
+    expect(parseFloat(balanceBeforeUSDC) <= parseFloat(balanceAfterUSDC) + parseFloat(borrowAmount)).to.be.true;
+  })
 })
