@@ -51,3 +51,7 @@ Compound Finance Protocol
 
 - Supply / Redeem
 - Borrow / Repay
+
+### Task 7*
+
+#### Same as Task 7 but with Compound III Comet.
