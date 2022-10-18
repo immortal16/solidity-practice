@@ -55,3 +55,7 @@ Compound Finance Protocol
 ### Task 7*
 
 #### Same as Task 7 but with Compound III Comet.
+
+### Task 8
+
+Vault Contract with Compound supplying.
