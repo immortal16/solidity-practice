@@ -2,19 +2,22 @@
 
 pragma solidity ^0.8.4;
 
-import "./openzeppelin/token/ERC20/ERC20Upgradeable.sol";
-import "./openzeppelin/security/PausableUpgradeable.sol";
-import "./openzeppelin/access/OwnableUpgradeable.sol";
-import "./openzeppelin/proxy/utils/Initializable.sol";
-import "./openzeppelin/IERC20.sol";
+import "./openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "./openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "./openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "./openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "./openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "./openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "./comet/CometInterface.sol";
 
 contract Vault is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableUpgradeable {
 
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+
     address public USDCaddress;
     address public cometAddress;
 
-    IERC20 private token;
+    IERC20Upgradeable private token;
     CometInterface private comet;
 
     event Mint(address indexed user, uint256 amount, string comment);
@@ -26,11 +29,11 @@ contract Vault is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableU
     {
         USDCaddress = _usdc;
         cometAddress = _comet;
-        token = IERC20(USDCaddress);
+        token = IERC20Upgradeable(USDCaddress);
         comet = CometInterface(cometAddress);
         __ERC20_init("Vault Share", "VS");
-        __Pausable_init();
-        __Ownable_init();
+        __Pausable_init_unchained();
+        __Ownable_init_unchained();
     }
 
     function deposit(uint256 _amount) external whenNotPaused {
@@ -43,19 +46,19 @@ contract Vault is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableU
 
         _mint(msg.sender, shares);
         emit Mint(msg.sender, shares, "Shares minted.");
-        token.transferFrom(msg.sender, address(this), _amount);
+        token.safeTransferFrom(msg.sender, address(this), _amount);
     }
 
     function withdraw(uint256 _shares) external whenNotPaused {
         uint256 amount = (_shares * token.balanceOf(address(this))) / totalSupply();
         _burn(msg.sender, _shares);
         emit Burn(msg.sender, _shares, "Shares burned.");
-        token.transfer(msg.sender, amount);
+        token.safeTransfer(msg.sender, amount);
     }
 
     function supplyCompound() external whenPaused onlyOwner {
         uint256 balance = token.balanceOf(address(this));
-        token.approve(cometAddress, balance);
+        token.safeApprove(cometAddress, balance);
         comet.supply(USDCaddress, balance);
     }
 
