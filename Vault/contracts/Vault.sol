@@ -1,59 +1,66 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 
-import "./Ownable.sol";
-import "./Pausable.sol";
-import "./CometInterface.sol";
-import "./IERC20.sol";
+pragma solidity ^0.8.4;
 
-pragma solidity 0.8.15;
+import "./openzeppelin/token/ERC20/ERC20Upgradeable.sol";
+import "./openzeppelin/security/PausableUpgradeable.sol";
+import "./openzeppelin/access/OwnableUpgradeable.sol";
+import "./openzeppelin/proxy/utils/Initializable.sol";
+import "./openzeppelin/IERC20.sol";
+import "./comet/CometInterface.sol";
 
-contract Vault is Pausable, Ownable {
+contract Vault is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableUpgradeable {
 
-    address public constant USDCaddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address public constant cometAddress = 0xc3d688B66703497DAA19211EEdff47f25384cdc3;
+    address public USDCaddress;
+    address public cometAddress;
 
-    ERC20 private constant token = ERC20(USDCaddress);
-    CometInterface private constant comet = CometInterface(cometAddress);
+    IERC20 private token;
+    CometInterface private comet;
 
-    uint public totalSupply;
-    mapping(address => uint) public balanceOf;
+    event Mint(address indexed user, uint256 amount, string comment);
+    event Burn(address indexed user, uint256 amount, string comment);
 
-    function _mint(address _to, uint _shares) private {
-        totalSupply += _shares;
-        balanceOf[_to] += _shares;
+    function initialize(address _usdc, address _comet)
+        reinitializer(1)
+        public 
+    {
+        USDCaddress = _usdc;
+        cometAddress = _comet;
+        token = IERC20(USDCaddress);
+        comet = CometInterface(cometAddress);
+        __ERC20_init("Vault Share", "VS");
+        __Pausable_init();
+        __Ownable_init();
     }
 
-    function _burn(address _from, uint _shares) private {
-        totalSupply -= _shares;
-        balanceOf[_from] -= _shares;
-    }
-
-    function deposit(uint _amount) external whenNotPaused {
-        uint shares;
-        if (totalSupply == 0) {
+    function deposit(uint256 _amount) external whenNotPaused {
+        uint256 shares;
+        if (totalSupply() == 0) {
             shares = _amount;
         } else {
-            shares = (_amount * totalSupply) / token.balanceOf(address(this));
+            shares = (_amount * totalSupply()) / token.balanceOf(address(this));
         }
 
         _mint(msg.sender, shares);
+        emit Mint(msg.sender, shares, "Shares minted.");
         token.transferFrom(msg.sender, address(this), _amount);
     }
 
-    function withdraw(uint _shares) external whenNotPaused {
-        uint amount = (_shares * token.balanceOf(address(this))) / totalSupply;
+    function withdraw(uint256 _shares) external whenNotPaused {
+        uint256 amount = (_shares * token.balanceOf(address(this))) / totalSupply();
         _burn(msg.sender, _shares);
+        emit Burn(msg.sender, _shares, "Shares burned.");
         token.transfer(msg.sender, amount);
     }
 
     function supplyCompound() external whenPaused onlyOwner {
-        uint balance = token.balanceOf(address(this));
+        uint256 balance = token.balanceOf(address(this));
         token.approve(cometAddress, balance);
         comet.supply(USDCaddress, balance);
     }
 
     function withdrawCompound() external whenPaused onlyOwner {
-        uint balanceWithInterest = comet.balanceOf(address(this));
+        uint256 balanceWithInterest = comet.balanceOf(address(this));
         comet.withdraw(USDCaddress, balanceWithInterest);
     }
 

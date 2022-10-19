@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require('@openzeppelin/hardhat-upgrades');
 require("dotenv").config();
 
 const {
@@ -26,7 +27,7 @@ module.exports = {
     hardhat: {
       forking: {
         url: `https://mainnet.infura.io/v3/${INFURA_KEY}`,
-        blockNumber: 15696486
+        blockNumber: 15781514
       },
       allowUnlimitedContractSize: false,
       timeout: 9999999999,

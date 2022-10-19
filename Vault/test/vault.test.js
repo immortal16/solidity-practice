@@ -1,11 +1,11 @@
 const { expect } = require("chai")
-const { ethers } = require("hardhat")
+const { ethers, upgrades } = require("hardhat")
 
 const CometAddress = '0xc3d688B66703497DAA19211EEdff47f25384cdc3';
-const cometAbi = require("../artifacts/contracts/CometInterface.sol/CometInterface.json").abi;
+const cometAbi = require("../artifacts/contracts/comet/CometInterface.sol/CometInterface.json").abi;
 
 const USDCaddress = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-const erc20Abi = require("../artifacts/contracts/IERC20.sol/ERC20.json").abi;
+const erc20Abi = require("../artifacts/contracts/openzeppelin/IERC20.sol/IERC20.json").abi;
 
 const USDCwhaleAddress = '0x7713974908be4bed47172370115e8b1219f4a5f0';
 
@@ -36,7 +36,7 @@ describe("Vault Contract", () => {
     user2 = signers[2];
 
     const VaultFactory = await ethers.getContractFactory("Vault");
-    const contract = await VaultFactory.deploy();
+    const contract = await upgrades.deployProxy(VaultFactory, [USDCaddress, CometAddress]);;
     Vault = await contract.deployed();
 
     USDC = await ethers.getContractAt(erc20Abi, USDCaddress, owner);
