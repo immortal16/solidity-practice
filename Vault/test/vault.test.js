@@ -47,7 +47,8 @@ describe("Vault Contract", () => {
   })
 
   it("deployed", async () => {
-    expect(await Vault.token()).to.equal('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48') &&
+    expect(await Vault.USDCaddress()).to.equal(USDCaddress) &&
+    expect(await Vault.cometAddress()).to.equal(CometAddress) &&
     expect(await Vault.paused()).to.be.false &&
     expect(await Vault.owner()).to.be.equal(owner.address) &&
     expect(await Vault.totalSupply()).to.equal(0);

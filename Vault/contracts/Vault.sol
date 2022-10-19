@@ -8,9 +8,12 @@ import "./IERC20.sol";
 pragma solidity 0.8.15;
 
 contract Vault is Pausable, Ownable {
+
     address public constant USDCaddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    ERC20 public constant token = ERC20(USDCaddress);
-    CometInterface private constant comet = CometInterface(0xc3d688B66703497DAA19211EEdff47f25384cdc3);
+    address public constant cometAddress = 0xc3d688B66703497DAA19211EEdff47f25384cdc3;
+
+    ERC20 private constant token = ERC20(USDCaddress);
+    CometInterface private constant comet = CometInterface(cometAddress);
 
     uint public totalSupply;
     mapping(address => uint) public balanceOf;
@@ -45,7 +48,7 @@ contract Vault is Pausable, Ownable {
 
     function supplyCompound() external whenPaused onlyOwner {
         uint balance = token.balanceOf(address(this));
-        token.approve(0xc3d688B66703497DAA19211EEdff47f25384cdc3, balance);
+        token.approve(cometAddress, balance);
         comet.supply(USDCaddress, balance);
     }
 
